@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  namespace: <%= service %>
+  namespace: services
   name: <%= service %>-deployment
   labels:
     app: virtuatable-<%= service %>
@@ -19,8 +19,6 @@ spec:
       containers:
         - name: virtuatable-<%= service %>
           image: virtuatable/<%= service %>:<%= version %>
-          args:
-            - web
           ports:
             - containerPort: 9292
           resources:
