@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: <%= service %>
+  name: <%= service %>-deployment
+  labels:
+    app: virtuatable-<%= service %>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: virtuatable-<%= service %>
+  template:
+    metadata:
+      labels:
+        app: virtuatable-<%= service %>
+    spec:
+      dnsPolicy: Default
+      containers:
+        - name: virtuatable-<%= service %>
+          image: virtuatable/<%= service %>:<%= version %>
+          args:
+            - web
+          ports:
+            - containerPort: 9292
+          resources:
+            limits:
+              cpu: 250m
+              memory: 128Mi
+            requests:
+              cpu: 250m
+              memory: 128Mi
+          env:
+            # Required to load the correct environment in Mongoid.
+            - name: RACK_ENV
+              value: production
+            - name: MONGODB_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: api
+                  key: database-uri
